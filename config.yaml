@@ -30,6 +30,7 @@
     # Informações para o envio de notificações via Telegram
     chatid: "xx"
     tokenapi: "xx"
+    conta: "Conta 1"
 
   # O quão confiante o bot precisa estar para clicar nos botões (valores entre 0 e 1. 0 é o valor mínimo, 1 é o valor máximo)
   threshold:
