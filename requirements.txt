@@ -10,3 +10,8 @@ PyRect==0.1.4
 PyScreeze==0.1.28
 pytweening==1.0.4
 PyYAML==6.0
+requests==2.26.0
+telepot==12.7
+python-telegram-bot
+pytesseract
+pyclick
