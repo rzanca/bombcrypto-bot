@@ -15,43 +15,51 @@ import time
 import sys
 import yaml
 import telegram
+import os
 
-stream = open("config.yaml", 'r')
-c = yaml.safe_load(stream)
-ct = c['threshold']
-ch = c['home']
-pause = c['time_intervals']['interval_between_moviments']
-cid = c['chatid']
-cta = c['tokenapi']
-cco = c['conta']
 hc = HumanClicker()
 pyautogui.MINIMUM_DURATION = 0.1
 pyautogui.MINIMUM_SLEEP = 0.1
-pyautogui.PAUSE = pause
-bot = telegram.Bot(token=cta)
-saldo_atual = 0.0
+pyautogui.PAUSE = 2
+TELEGRAM_BOT_TOKEN = "Token API"
+TELEGRAM_CHAT_ID  = "Chat ID"
+CONTA = "Conta 1"
+
+bot = telegram.Bot(token=TELEGRAM_BOT_TOKEN)
+
 
 def telegram_bot_sendtext(bot_message, num_try=0):
     global bot
     try:
-        return bot.send_message(chat_id=cid, text=bot_message)
+        return bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=bot_message)
     except:
         if num_try == 1:
-            bot = telegram.Bot(token=cta)
+            bot = telegram.Bot(token=TELEGRAM_BOT_TOKEN)
             return telegram_bot_sendtext(bot_message, 1)
         return 0
 
 def telegram_bot_sendphoto(photo_path, num_try=0):
     global bot
     try:
-        return bot.send_photo(chat_id=cid, photo=open(photo_path, "rb"))
+        return bot.send_photo(chat_id=TELEGRAM_CHAT_ID, photo=open(photo_path, "rb"))
     except:
         if num_try == 1:
-            bot = telegram.Bot(token=cta)
+            bot = telegram.Bot(token=TELEGRAM_BOT_TOKEN)
             return telegram_bot_sendphoto(photo_path, 1)
         return 0
 
-test = telegram_bot_sendtext("🔌 Bot inicializado na " + cco + ". \n\n 💰 É hora de faturar alguns BCoins!!!")
+test = telegram_bot_sendtext("🔌 Bot inicializado na " + CONTA + ". \n\n 💰 É hora de faturar alguns BCoins!!!")
+
+saldo_atual = 0.0
+
+if __name__ == '__main__':
+    stream = open("config.yaml", 'r')
+    c = yaml.safe_load(stream)
+
+ct = c['threshold']
+ch = c['home']
+
+pyautogui.PAUSE = c['time_intervals']['interval_between_moviments']
 
 cat = """
 >>---> BOT original do https://github.com/mpcabete/bombcrypto-bot/
@@ -82,14 +90,16 @@ def remove_suffix(input_string, suffix):
         return input_string[:-len(suffix)]
     return input_string
 
-def load_images(dir_path='./targets/'):
-    file_names = listdir(dir_path)
+def load_images():
+    file_names = listdir("./targets/")
     targets = {}
     for file in file_names:
-        path = 'targets/' + file
-        targets[remove_suffix(file, '.png')] = cv2.imread(path)
+        path = "targets/" + file
+        targets[remove_suffix(file, ".png")] = cv2.imread(path)
 
     return targets
+
+images = load_images()
 
 def loadHeroesToSendHome():
     file_names = listdir('./targets/heroes-to-send-home')
@@ -111,22 +121,28 @@ def show(rectangles, img = None):
     cv2.imshow('img',img)
     cv2.waitKey(0)
 
-def clickBtn(img, timeout=3, threshold = ct['default']):
+def clickBtn(img, name=None, timeout=3, threshold=ct["default"]):
     logger(None, progress_indicator=True)
+    if not name is None:
+        pass
     start = time.time()
-    has_timed_out = False
-    while(not has_timed_out):
+    clicked = False
+    while not clicked:
         matches = positions(img, threshold=threshold)
-        if(len(matches)==0):
-            has_timed_out = time.time()-start > timeout
+        if len(matches) == 0:
+            hast_timed_out = time.time() - start > timeout
+            if hast_timed_out:
+                if not name is None:
+                    pass
+                return False
             continue
-        x,y,w,h = matches[0]
-        pos_click_x = x+w/2
-        pos_click_y = y+h/2
-        moveToWithRandomness(pos_click_x,pos_click_y,1)
+
+        x, y, w, h = matches[0]
+        pos_click_x = x + w / 2
+        pos_click_y = y + h / 2
+        moveToWithRandomness(pos_click_x, pos_click_y, 1)
         pyautogui.click()
         return True
-    return False
 
 def printSreen():
     with mss.mss() as sct:
@@ -157,7 +173,7 @@ def scroll():
     if (len(commoms) == 0):
         return
     x,y,w,h = commoms[len(commoms)-1]
-#
+
     moveToWithRandomness(x,y,1)
 
     if not c['use_click_and_drag_instead_of_scroll']:
@@ -364,6 +380,7 @@ def refreshHeroes():
 
 def goSaldo():
     logger('Consultando seu saldo')
+    time.sleep(2)
     global saldo_atual
     clickBtn(images['consultar-saldo'])
     i = 10
@@ -390,7 +407,7 @@ def goSaldo():
     img_dir = os.path.dirname(os.path.realpath(__file__)) + r'\targets\saldo1.png'
     myScreen.save(img_dir)
     time.sleep(2)
-    enviar = ('🚨 Seu saldo Bcoins 🚀🚀🚀 na' + cco)
+    enviar = ('🚨 Seu saldo Bcoins 🚀🚀🚀 na' + CONTA)
     test = telegram_bot_sendtext(enviar)
     telegram_bot_sendphoto(img_dir)
 
@@ -460,7 +477,7 @@ def tempoGastoParaComletarMapa():
                 )
 
             telegram_bot_sendtext(
-                f"Demoramos {horas_gastas} {intervalo} para concluir o mapa na" + cco + "."
+                f"Demoramos {horas_gastas} {intervalo} para concluir o mapa na" + CONTA + "."
             )
         with open(caminho, "w") as text_file_write:
             data_inicio_mapa = datetime.now()
@@ -468,24 +485,6 @@ def tempoGastoParaComletarMapa():
 
     except:
         logger("Não conseguiu obter informações do tempo de conclusão do mapa.")
-
-def decobreScreen():
-
-    if len(positions(images["select-wallet-2"], threshold=0.75)) > 0:
-        return 2
-    elif len(positions(images["ok"], threshold=ct["default"])) > 0:
-        return 6
-    elif len(positions(images["connect-wallet"], threshold=ct["default"])) > 0:
-        return 1
-    elif len(positions(images["hero-icon"], threshold=ct["default"])) > 0:
-        return 3
-    elif len(positions(images["go-work"], threshold=ct["default"])) > 0:
-        return 4
-    elif len(positions(images["new-map"], threshold=ct["default"])) > 0:
-        return 7
-    elif len(positions(images["go-back-arrow"], threshold=ct["default"])) > 0:
-        return 5
-    return 0
     
 def main():
     global hero_clicks
@@ -512,109 +511,54 @@ def main():
     last = {
     "login" : 0,
     "heroes" : 0,
+    "ssaldo" :0,
     "new_map" : 0,
-    "ssaldo" : 0,
+    #"check_for_captcha" : 0,
     "refresh_heroes" : 0
     }
+    # =========
 
-    screenAnt = -1
     while True:
         now = time.time()
-        screen = decobreScreen()
-        try:
-            if screen == 0:
-                logger("Não reconheceu nenhuma tela!")
-                time.sleep(10)
-                continue
-            elif screen == 1:
-                if screen == screenAnt:
-                    logger("Tentando logar manualmente...")
-                    if not clickBtn(images["metamask-ext-ico"], timeout=10):
-                        if not clickBtn(images["metamask-taskbar"], timeout=10):
-                            if clickBtn(
-                                images["connect-wallet"],
-                                name="connectWalletBtn",
-                                timeout=10,
-                            ):
-                                logger("Botao de conexao da carteira encontrado, logando!")
-                    time.sleep(2)
 
-                elif (now - last["login"]) > (t["check_for_login"] * 60):
-                    logger("Checando se o jogo desconectou.")
-                    sys.stdout.flush()
-                    last["login"] = now
-                    login()
-            elif screen == 2:
-                logger("Clicando no botao de assinatura da MetaMask.")
-                clickBtn(images["select-wallet-2"], name="sign button", timeout=8)
-                if screenAnt == 1 and screen == 1:
-                    time.sleep(15)
-            elif screen == 3:
-                clickBtn(images["hero-icon"])
-            elif screen == 4:
-                if (now - last["heroes"]) > (t["send_heroes_for_work"] * 60):
-                    last["heroes"] = now
-                    logger("Enviando herois para o trabalho.")
-                    refreshHeroes()
-            elif screen == 5:
-                logger("Tela de herois trabalhando.")
-                if last["heroes"] == 0:
-                    last["heroes"] = now
-                if last["refresh_heroes"] == 0:
-                    last["refresh_heroes"] = last["heroes"]
-                if (now - last["refresh_heroes"]) > (
-                    t["refresh_heroes_positions"] * 60
-                ):
-                    last["refresh_heroes"] = now
-                    logger("Atualizando posicoes dos herois.")
-                    refreshHeroesPositions()
-            elif screen == 6:
-                clickBtn(images["ok"], name="okBtn", timeout=5)
-            elif screen == 7:
-                if (now - last["new_map"]) > t["check_for_new_map_button"]:
-                    last["new_map"] = now
-                    if clickBtn(images["new-map"]):
-                        tempoGastoParaComletarMapa()
-                        loggerMapClicked()
-                        telegram_bot_sendtext(f"Completamos mais um mapa na" + cco + "!")
-                        time.sleep(3)
-                        num_jaulas = len(positions(images["jail"], threshold=0.8))
-                        if num_jaulas > 0:
-                            telegram_bot_sendtext(
-                                f"Parabéns temos {num_jaulas} nova(s) jaula(s) no novo mapa 🎉🎉🎉 na " + cco + "."
-                            )
+        #if now - last["check_for_captcha"] > addRandomness(t['check_for_captcha'] * 60):
+        #    last["check_for_captcha"] = now
 
-            if screen == 5 and (now - last["refresh_heroes"]) > (
-                t["refresh_heroes_positions"] * 60
-            ):
-                last["refresh_heroes"] = now
-                logger("Atualizando posicoes dos herois.")
-                refreshHeroesPositions()
-            if screen == 5 and (now - last["heroes"]) > (
-                t["send_heroes_for_work"] * 60
-            ):
-                clickBtn(images["go-back-arrow"])
-                screen = 3
+        if now - last["heroes"] > addRandomness(t['send_heroes_for_work'] * 60):
+            last["heroes"] = now
+            refreshHeroes()
+           
+        if now - last["login"] > addRandomness(t['check_for_login'] * 60):
+            sys.stdout.flush()
+            last["login"] = now
+            login()
 
-            if screen == 5 and ((now - last["ssaldo"]) > (addRandomness(t['get_saldo'] * 60))):
-               last["ssaldo"] = now
-               goSaldo()
-        except:
-            continue
+        if now - last["new_map"] > t['check_for_new_map_button']:
+            last["new_map"] = now
 
-        screenAnt = screen
+            if clickBtn(images["new-map"]):
+                tempoGastoParaComletarMapa()
+                loggerMapClicked()
+                telegram_bot_sendtext(f"Completamos mais um mapa!")
+                time.sleep(3)
+                num_jaulas = len(positions(images["jail"], threshold=0.8))
+                if num_jaulas > 0:
+                    telegram_bot_sendtext(
+                        f"Parabéns temos {num_jaulas} nova(s) jaula(s) no novo mapa 🎉🎉🎉."
+                        )
+
+        if now - last["refresh_heroes"] > addRandomness( t['refresh_heroes_positions'] * 60):
+            last["refresh_heroes"] = now
+            refreshHeroesPositions()
+            
+        if now - last["ssaldo"] > addRandomness(t['get_saldo'] * 60):
+            last["ssaldo"] = now
+            goSaldo()
 
         logger(None, progress_indicator=True)
-        if screen == 5:
-            time.sleep(60)
+
         sys.stdout.flush()
 
         time.sleep(1)
 
-
-
-if __name__ == '__main__':
-
-
-
-    main()
+main()
