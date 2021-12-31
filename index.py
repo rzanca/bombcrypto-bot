@@ -17,13 +17,22 @@ import yaml
 import telegram
 import os
 
+if __name__ == '__main__':
+    stream = open("config.yaml", 'r')
+    c = yaml.safe_load(stream)
+
+ct = c['threshold']
+ch = c['home']
+cn = c['telegram_log']
+pyautogui.PAUSE = c['time_intervals']['interval_between_moviments']
+
 hc = HumanClicker()
 pyautogui.MINIMUM_DURATION = 0.1
 pyautogui.MINIMUM_SLEEP = 0.1
 pyautogui.PAUSE = 2
-TELEGRAM_BOT_TOKEN = "Token API"
-TELEGRAM_CHAT_ID  = "Chat ID"
-CONTA = "Conta 1"
+TELEGRAM_BOT_TOKEN = cn['token']
+TELEGRAM_CHAT_ID  = cn['chatid']
+CONTA = cn['conta']
 
 bot = telegram.Bot(token=TELEGRAM_BOT_TOKEN)
 
@@ -52,14 +61,6 @@ test = telegram_bot_sendtext("🔌 Bot inicializado na " + CONTA + ". \n\n 💰 
 
 saldo_atual = 0.0
 
-if __name__ == '__main__':
-    stream = open("config.yaml", 'r')
-    c = yaml.safe_load(stream)
-
-ct = c['threshold']
-ch = c['home']
-
-pyautogui.PAUSE = c['time_intervals']['interval_between_moviments']
 
 cat = """
 >>---> BOT original do https://github.com/mpcabete/bombcrypto-bot/
@@ -407,7 +408,7 @@ def goSaldo():
     img_dir = os.path.dirname(os.path.realpath(__file__)) + r'\targets\saldo1.png'
     myScreen.save(img_dir)
     time.sleep(2)
-    enviar = ('🚨 Seu saldo Bcoins 🚀🚀🚀 na' + CONTA)
+    enviar = ('🚨 Seu saldo Bcoins 🚀🚀🚀 na ' + CONTA)
     test = telegram_bot_sendtext(enviar)
     telegram_bot_sendphoto(img_dir)
 
@@ -477,7 +478,7 @@ def tempoGastoParaComletarMapa():
                 )
 
             telegram_bot_sendtext(
-                f"Demoramos {horas_gastas} {intervalo} para concluir o mapa na" + CONTA + "."
+                f"Demoramos {horas_gastas} {intervalo} para concluir o mapa na " + CONTA + "."
             )
         with open(caminho, "w") as text_file_write:
             data_inicio_mapa = datetime.now()
@@ -501,7 +502,7 @@ def main():
         global home_heroes
         home_heroes = loadHeroesToSendHome()
     else:
-        print('>>---> Home feature not enabled')
+        print('>>---> Modo Casa não habilitado')
     print('\n')
 
     print(cat)
@@ -513,16 +514,12 @@ def main():
     "heroes" : 0,
     "ssaldo" :0,
     "new_map" : 0,
-    #"check_for_captcha" : 0,
     "refresh_heroes" : 0
     }
-    # =========
+
 
     while True:
         now = time.time()
-
-        #if now - last["check_for_captcha"] > addRandomness(t['check_for_captcha'] * 60):
-        #    last["check_for_captcha"] = now
 
         if now - last["heroes"] > addRandomness(t['send_heroes_for_work'] * 60):
             last["heroes"] = now

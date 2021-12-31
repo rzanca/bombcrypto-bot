@@ -1,5 +1,10 @@
 ---
-
+  # Configurações de conexão para Telegram
+  telegram_log:
+    token: 'Altere com o seu TOKEN API'
+    chatid: 'Altere com o seu CHAT ID'
+    conta: 'Conta 01'
+    
   # Configurações de intervalos de tempo
   time_intervals:
     
@@ -36,21 +41,54 @@
     commom: 0.8
 
     # Valor padrão: 0.8
+    rare: 0.8
+
+    # Valor padrão: 0.8
+    super_rare: 0.8
+        
+    # Valor padrão: 0.8
+    epic: 0.8
+    
+    # Valor padrão: 0.8
+    legend: 0.8    
+    
+    # Valor padrão: 0.8
+    super_legend: 0.8      
+    
+    # Valor padrão: 0.8
     select_wallet_buttons: 0.8
 
     # Valor padrão: 0.9
     go_to_work_btn: 0.9
+    
+    # Valor padrão: 0.7
+    bau_roxo: 0.7
+
+    # Valor padrão: 0.8
+    bau_roxo_50: 0.8
+
+    # Valor padrão: 0.7
+    bau_gold: 0.7
+
+    # Valor padrão: 0.8
+    bau_gold_50: 0.8
+
+    # Valor padrão: 0.7
+    bau_blue: 0.7
+
+    # Valor padrão: 0.8
+    bau_blue_50: 0.8
 
     # Valor padrão: 0.9
     green_bar: 0.9
-
+    
+  # Configurações do modo casa
   home:
     enable: False
     # Se o bot está enviando o hero errado para a home, aumente esse número.
     # Se o bot não está enviando o hero, diminua esse número.
     hero_threshold: 0.8
     home_button_threshold: 0.9
-
 
   # Valor padrão: 60
   scroll_size: 60
