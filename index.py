@@ -25,7 +25,7 @@ ct = c['threshold']
 ch = c['home']
 cn = c['telegram_log']
 pyautogui.PAUSE = c['time_intervals']['interval_between_moviments']
-
+pyautogui.FAILSAFE = False
 hc = HumanClicker()
 pyautogui.MINIMUM_DURATION = 0.1
 pyautogui.MINIMUM_SLEEP = 0.1
@@ -534,9 +534,9 @@ def main():
             last["new_map"] = now
 
             if clickBtn(images["new-map"]):
+                telegram_bot_sendtext(f"Completamos mais um mapa!")
                 tempoGastoParaComletarMapa()
                 loggerMapClicked()
-                telegram_bot_sendtext(f"Completamos mais um mapa!")
                 time.sleep(3)
                 num_jaulas = len(positions(images["jail"], threshold=0.8))
                 if num_jaulas > 0:
