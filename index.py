@@ -172,7 +172,15 @@ def scroll():
 
     commoms = positions(images['commom-text'], threshold = ct['commom'])
     if (len(commoms) == 0):
-        return
+        commoms = positions(images['rare-text'], threshold = ct['rare'])
+        if (len(commoms) == 0):
+            commoms = positions(images['super_rare-text'], threshold = ct['super_rare'])
+            if (len(commoms) == 0):
+                commoms = positions(images['epic-text'], threshold = ct['epic'])
+                if (len(commoms) == 0):          
+                    commoms = positions(images['legend-text'], threshold = ct['legend'])
+                    if (len(commoms) == 0):
+                        return
     x,y,w,h = commoms[len(commoms)-1]
 
     moveToWithRandomness(x,y,1)
@@ -329,9 +337,9 @@ def sendHeroesHome():
 
     n = len(heroes_positions)
     if n == 0:
-        print('No heroes that should be sent home found.')
+        print('Nenhum heroi que deveria ser enviado para casa encontrado.')
         return
-    print(' %d heroes that should be sent home found' % n)
+    print(' %d Herois que devem ser enviados para casa encontrados.' % n)
     go_home_buttons = positions(images['send-home'], threshold=ch['home_button_threshold'])
     go_work_buttons = positions(images['go-work'], threshold=ct['go_to_work_btn'])
 
@@ -339,17 +347,17 @@ def sendHeroesHome():
         if not isHome(position,go_home_buttons):
             print(isWorking(position, go_work_buttons))
             if(not isWorking(position, go_work_buttons)):
-                print ('hero not working, sending him home')
+                print ('Heroi não está trabalhando, enviando para casa.')
                 moveToWithRandomness(go_home_buttons[0][0]+go_home_buttons[0][2]/2,position[1]+position[3]/2,1)
                 pyautogui.click()
             else:
-                print ('hero working, not sending him home(no dark work button)')
+                print ('Heroi está trabalhando, não será enviado para casa.')
         else:
-            print('hero already home, or home full(no dark home button)')
+            print('Heroi já está na casa, ou a casa está cheia.')
 
 def refreshHeroes():
     logger('🏢 Procurando herois para trabalhar')
-
+    
     goToHeroes()
 
     if c['select_heroes_mode'] == "full":
@@ -371,12 +379,11 @@ def refreshHeroes():
             buttonsClicked = clickButtons()
 
         sendHeroesHome()
-
         if buttonsClicked == 0:
             empty_scrolls_attempts = empty_scrolls_attempts - 1
         scroll()
         time.sleep(2)
-    logger('💪 {} herois enviado para o trabalho'.format(hero_clicks))
+    logger('💪 {} Herois enviado para o trabalho'.format(hero_clicks))
     goToGame()
 
 def goSaldo():
@@ -512,9 +519,9 @@ def main():
     last = {
     "login" : 0,
     "heroes" : 0,
-    "ssaldo" :0,
     "new_map" : 0,
-    "refresh_heroes" : 0
+    "refresh_heroes" : 0,
+    "ssaldo" :0
     }
 
 
