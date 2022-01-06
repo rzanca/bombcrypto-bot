@@ -109,7 +109,7 @@ def loadHeroesToSendHome():
         path = './targets/heroes-to-send-home/' + file
         heroes.append(cv2.imread(path))
 
-    print('>>---> %d heroes that should be sent home loaded' % len(heroes))
+    print('>>---> %d Herois que devem ser mandados para casa carregados.' % len(heroes))
     return heroes
 
 def show(rectangles, img = None):

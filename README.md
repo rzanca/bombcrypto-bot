@@ -1,7 +1,8 @@
-Atualizações em andamento:
-- Notificações no Telegram - Finalizado
-- Limpeza do código - Finalizado
-- Gerenciamento de Stamina - Em andamento
-- Versão Multi Contas - Em Andamento
+BOT para conta única!
 
-Os tutoriais de configuração estão nos arquivos, Configurando o BOT.txt e TelegramBOT.txt 
+Funções extras:
+- Envios de notificações via Telegram
+- Reinicio automático em caso de falha na execução
+- Controle do tempo gasto em cada mapa
+
+Tutoriais de instalação no arquivo Configurando o BOT.txt
